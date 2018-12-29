@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from urllib2 import Request, urlopen
+from urllib2 import Request, urlopen, URLError
 from base64 import encodestring
 import json
 
@@ -30,10 +30,14 @@ class Client:
         self.__password = password
 
     def post(self, data={}):
-        return json.loads(self.__open(data))
+        result = self.__open(data)
+        if result is not None:
+            return json.loads(result)
     
     def get(self, data=None):
-        return json.loads(self.__open(data))
+        result = self.__open(data)
+        if result is not None:
+            return json.loads(result)
 
     def put(self, data={}):
         return self.__open(data, method='PUT')
@@ -56,7 +60,12 @@ class Client:
             request.get_method = lambda:method
         if data is not None:
             request.add_data(json.dumps(data))
-        res = urlopen(request)
-        result = res.readline()
-        res.close()
-        return result
+        res = None
+        try:
+            res = urlopen(request)
+            return res.readline()
+        except URLError, err:
+            print 'error: ' + str(err)
+        finally:
+            if res is not None:
+                res.close()
