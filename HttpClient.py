@@ -29,10 +29,17 @@ class Client:
     def setPassword(self, password):
         self.__password = password
 
-    def post(self, data):
-        request = self.__build()
-        request.add_data(json.dumps(data))
-        return self.__open(request)
+    def post(self, data={}):
+        return json.loads(self.__open(data))
+    
+    def get(self, data=None):
+        return json.loads(self.__open(data))
+
+    def put(self, data={}):
+        return self.__open(data, method='PUT')
+
+    def delete(self, data=None):
+        return self.__open(data, method='DELETE')
 
     def __build(self):
         if self.__url is None:
@@ -43,8 +50,13 @@ class Client:
         request.add_header('Content-type', 'application/json')
         return request
 
-    def __open(self, request):
+    def __open(self, data=None, method=None):
+        request = self.__build()
+        if method is not None:
+            request.get_method = lambda:method
+        if data is not None:
+            request.add_data(json.dumps(data))
         res = urlopen(request)
         result = res.readline()
         res.close()
-        return json.dumps(json.loads(result), indent=4)
+        return result
