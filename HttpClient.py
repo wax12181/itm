@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from urllib2 import Request, urlopen, URLError
+from urllib2 import Request, urlopen, HTTPError, URLError
 from base64 import encodestring
 import json
 
@@ -64,7 +64,7 @@ class Client:
         try:
             res = urlopen(request)
             return res.readline()
-        except URLError, err:
+        except (HTTPError, URLError) as err:
             print 'error: ' + str(err)
         finally:
             if res is not None:
