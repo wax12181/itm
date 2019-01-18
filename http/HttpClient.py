@@ -6,7 +6,7 @@ import json
 
 
 class Client:
-    'http client'
+    """http client"""
 
     __account = 'admin'
     __password = 'admin'
@@ -29,9 +29,11 @@ class Client:
     def setPassword(self, password):
         self.__password = password
 
-    def post(self, data={}):
+    def post(self, data=None):
+        if data is None:
+            data = {}
         result = self.__open(data)
-        if result is not None:
+        if result is not None and result is not '':
             return json.loads(result)
     
     def get(self, data=None):
@@ -39,7 +41,9 @@ class Client:
         if result is not None:
             return json.loads(result)
 
-    def put(self, data={}):
+    def put(self, data=None):
+        if data is None:
+            data = {}
         return self.__open(data, method='PUT')
 
     def delete(self, data=None):
