@@ -7,7 +7,7 @@
 
 - [简介](#简介)
 - [下载/运行 说明](#下载运行-说明)
-- [使用说明](#目录说明)
+- [使用示例](#使用示例)
 <!-- tocstop -->
 
 ### 简介
@@ -31,12 +31,16 @@
 
      ![step1](./docs/ide1.jpg)
      
-     ![step1](./docs/ide2.jpg)
+     ![step2](./docs/ide2.jpg)
      
-     ![step1](./docs/ide3.jpg)
+     ![step3](./docs/ide3.jpg)
      
-     ![step1](./docs/ide4.jpg)
+     ![step4](./docs/ide4.jpg)
      
-     ![step1](./docs/ide5.jpg)
+     ![step5](./docs/ide5.jpg)
+     
+### 使用示例
+
+![step6](./docs/ide6.jpg)
     
 
