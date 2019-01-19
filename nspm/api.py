@@ -62,36 +62,99 @@ class Topology(Api):
         self.getClient().setUrl(self.url() + 'topology')
         return self.getClient().get()
 
+    # node
+    def importNodes(self, data):
+        self.getClient().setUrl(self.url() + 'topology/nodes')
+        self.getClient().put(data)
+
     def getNodes(self):
         topology = self.getTopology()
         if topology is None:
             return None
         return topology.get("nodes")
 
-    def getLines(self):
-        topology = self.getTopology()
-        if topology is None:
-            return None
-        return topology.get("lines")
-
-    def getNodeByIp(self, ip):
+    def queryNode(self, host=None, name=None):
         nodes = self.getNodes()
+        result = []
+        for node in nodes:
+            if host is not None and host != node.get('host'):
+                continue
+            if name is not None and name != node.get('name'):
+                continue
+            result.append(node)
+        return result
+
+    def getNodeIdByIp(self, host):
+        nodes = self.queryNode(host=host)
         if nodes is None:
             return None
-        for n in nodes:
-            if n.get('host') == ip:
-                return n
-        return None
+        return nodes[0].get('id')
 
-    def getNodeIdByIp(self, ip):
-        node = self.getNodeByIp(ip)
-        if node is None:
-            return None
-        return node.get('id')
+    # subnet
+    def addSubnet(self, data):
+        self.getClient().setUrl(self.url() + 'topology/subnets')
+        self.getClient().post(data)
 
-    def removeLineById(self, lineId):
-        self.getClient().setUrl(self.url() + 'topology/lines' + lineId)
+    def removeSubnet(self, subnetId):
+        self.getClient().setUrl(self.url() + 'topology/subnets/' + subnetId)
         self.getClient().delete()
+
+    def querySubnet(self, networkSegment=None):
+        result = []
+        topology = self.getTopology()
+        if topology is None:
+            return []
+        for subnet in topology.get("subnets"):
+            if networkSegment is not None and networkSegment != subnet.get('networkSegment'):
+                continue
+            result.append(subnet)
+        return result
+
+    # line
+    def addLine(self, data):
+        self.getClient().setUrl(self.url() + 'topology/lines')
+        self.getClient().post(data)
+
+    def removeLine(self, lineId):
+        self.getClient().setUrl(self.url() + 'topology/lines/' + lineId)
+        self.getClient().delete()
+
+    def queryLine(self, subnet=None, node=None):
+        topology = self.getTopology()
+        result = []
+        if topology is None:
+            return result
+        for line in topology.get("lines"):
+            if subnet is not None and subnet != line.get('subnet'):
+                continue
+            if node is not None and node != line.get('tp').get('node'):
+                continue
+            result.append(line)
+        return result
+
+    # link
+    def addLink(self, data):
+        self.getClient().setUrl(self.url() + 'topology/links')
+        self.getClient().post(data)
+
+    def removeLink(self, linkId):
+        self.getClient().setUrl(self.url() + 'topology/links/' + linkId)
+        self.getClient().delete()
+
+    def queryLink(self, linkType=None, srcNode=None, dstNode=None):
+        topology = self.getTopology()
+        result = []
+        if topology is None:
+            return result
+        for link in topology.get("links"):
+            if linkType is not None and linkType != link.get('linkType'):
+                continue
+            if srcNode is not None and srcNode != link.get('source').get('node'):
+                continue
+            if dstNode is not None and dstNode != link.get('destination').get('node'):
+                continue
+            result.append(link)
+        return result
 
 
 class Tighten(Api):
