@@ -29,14 +29,14 @@
 3. 配置python IDE的虚拟环境(venv)，以PyCharm为例
     * File >> Settings >> Project Interpreter
 
-     ![step1](./docs/ide1.png)
+     ![step1](./docs/ide1.jpg)
      
-     ![step1](./docs/ide2.png)
+     ![step1](./docs/ide2.jpg)
      
-     ![step1](./docs/ide3.png)
+     ![step1](./docs/ide3.jpg)
      
-     ![step1](./docs/ide4.png)
+     ![step1](./docs/ide4.jpg)
      
-     ![step1](./docs/ide5.png)
+     ![step1](./docs/ide5.jpg)
     
 
