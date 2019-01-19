@@ -61,7 +61,7 @@ class Client:
     def __open(self, data=None, method=None):
         request = self.__build()
         if method is not None:
-            request.get_method = lambda:method
+            request.get_method = lambda: method
         if data is not None:
             request.add_data(json.dumps(data))
         res = None

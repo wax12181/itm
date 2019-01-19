@@ -68,6 +68,12 @@ class Topology(Api):
             return None
         return topology.get("nodes")
 
+    def getLines(self):
+        topology = self.getTopology()
+        if topology is None:
+            return None
+        return topology.get("lines")
+
     def getNodeByIp(self, ip):
         nodes = self.getNodes()
         if nodes is None:
@@ -83,6 +89,10 @@ class Topology(Api):
             return None
         return node.get('id')
 
+    def removeLineById(self, lineId):
+        self.getClient().setUrl(self.url() + 'topology/lines' + lineId)
+        self.getClient().delete()
+
 
 class Tighten(Api):
     def getConfig(self):
@@ -92,4 +102,3 @@ class Tighten(Api):
     def setConfig(self, data):
         self.getClient().setUrl(self.url() + 'shrink-config')
         self.getClient().post(data)
-
