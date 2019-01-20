@@ -141,7 +141,7 @@ class Topology(Api):
         self.getClient().setUrl(self.url() + 'topology/links/' + linkId)
         self.getClient().delete()
 
-    def queryLink(self, linkType=None, srcNode=None, dstNode=None):
+    def queryLink(self, linkType=None, srcNode=None, srcTpName=None, dstNode=None, dstTpName=None):
         topology = self.getTopology()
         result = []
         if topology is None:
@@ -151,7 +151,11 @@ class Topology(Api):
                 continue
             if srcNode is not None and srcNode != link.get('source').get('node'):
                 continue
+            if srcTpName is not None and srcTpName != link.get('source').get('name'):
+                continue
             if dstNode is not None and dstNode != link.get('destination').get('node'):
+                continue
+            if dstTpName is not None and dstTpName != link.get('destination').get('name'):
                 continue
             result.append(link)
         return result
