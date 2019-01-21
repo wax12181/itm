@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from http.HttpClient import Client
+from client.HttpClient import Client
 
 
 class Api:
