@@ -19,37 +19,32 @@ class Api:
 
 
 class Device(Api):
-    def getDevices(self):
+    def queryDevice(self):
         self.getClient().setUrl(self.url() + 'devices?pageNum=1&pageSize=100')
         return self.getClient().get().get('items')
 
-    def getRoutes(self, deviceId):
+    def queryRoute(self, deviceId, routeType='INDIRECT'):
         self.getClient().setUrl(self.url() + 'device-data/' + deviceId + '/routers?pageNum=1&pageSize=100')
-        return self.getClient().get().get('items')
-
-    def queryRoutes(self, deviceId, routeType='INDIRECT'):
-        routes = self.getRoutes(deviceId)
+        routes = self.getClient().get().get('items')
         result = []
-        if routes is not None:
-            for r in routes:
-                if r.get('type') == routeType:
-                    result.append(r)
+        if routes is None:
+            return result
+        for r in routes:
+            if r.get('type') == routeType:
+                result.append(r)
         return result
 
-    def getInterfaces(self, deviceId):
+    def queryInterface(self, deviceId, ipIsNotNone=True):
         self.getClient().setUrl(self.url() + 'device-data/' + deviceId +
                                 '/physical-interfaces?pageNum=1&pageSize=100')
-        return self.getClient().get().get('items')
-
-    def queryInterfaces(self, deviceId, ipIsNotNone=True):
-        interfaces = self.getInterfaces(deviceId)
+        interfaces = self.getClient().get().get('items')
         result = []
         if interfaces is None:
             return result
-        if ipIsNotNone:
-            for tp in interfaces:
-                if tp.get('ipItems') is not None:
-                    result.append(tp)
+        for tp in interfaces:
+            if ipIsNotNone and (tp.get('ipItems') is None or len(tp.get('ipItems')) is 0):
+                continue
+            result.append(tp)
         return result
 
 
@@ -93,7 +88,7 @@ class Topology(Api):
     # subnet
     def addSubnet(self, data):
         self.getClient().setUrl(self.url() + 'topology/subnets')
-        self.getClient().post(data)
+        return self.getClient().post(data)
 
     def removeSubnet(self, subnetId):
         self.getClient().setUrl(self.url() + 'topology/subnets/' + subnetId)
@@ -113,7 +108,7 @@ class Topology(Api):
     # line
     def addLine(self, data):
         self.getClient().setUrl(self.url() + 'topology/lines')
-        self.getClient().post(data)
+        return self.getClient().post(data)
 
     def removeLine(self, lineId):
         self.getClient().setUrl(self.url() + 'topology/lines/' + lineId)
@@ -135,7 +130,7 @@ class Topology(Api):
     # link
     def addLink(self, data):
         self.getClient().setUrl(self.url() + 'topology/links')
-        self.getClient().post(data)
+        return self.getClient().post(data)
 
     def removeLink(self, linkId):
         self.getClient().setUrl(self.url() + 'topology/links/' + linkId)
