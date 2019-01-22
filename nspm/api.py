@@ -62,16 +62,12 @@ class Topology(Api):
         self.getClient().setUrl(self.url() + 'topology/nodes')
         self.getClient().put(data)
 
-    def getNodes(self):
-        topology = self.getTopology()
-        if topology is None:
-            return None
-        return topology.get("nodes")
-
     def queryNode(self, host=None, name=None):
-        nodes = self.getNodes()
+        topology = self.getTopology()
         result = []
-        for node in nodes:
+        if topology is None:
+            return result
+        for node in topology.get("nodes"):
             if host is not None and host != node.get('host'):
                 continue
             if name is not None and name != node.get('name'):
@@ -132,6 +128,16 @@ class Topology(Api):
         self.getClient().setUrl(self.url() + 'topology/links')
         return self.getClient().post(data)
 
+    # 添加双向链路
+    def addBiLink(self, source, destination):
+        links = self.queryLink(source['node'], source['name'], destination['node'], destination['name'])
+        if links is None or len(links) is 0:
+            self.addLink({'source': source, 'destination': destination})
+
+        links = self.queryLink(destination['node'], destination['name'], source['node'], source['name'])
+        if links is None or len(links) is 0:
+            self.addLink({'source': destination, 'destination': source})
+
     def removeLink(self, linkId):
         self.getClient().setUrl(self.url() + 'topology/links/' + linkId)
         self.getClient().delete()
@@ -153,6 +159,40 @@ class Topology(Api):
             if dstTpName is not None and dstTpName != link.get('destination').get('name'):
                 continue
             result.append(link)
+        return result
+
+    # path
+    def findPath(self, sourceIp, destIp, protocol=None, protocolNum=None, destPort=None):
+        self.getClient().setUrl(self.url() + 'topology/paths/analyse')
+        data = {'sourceIp': sourceIp, 'destIp': destIp}
+        if protocol is not None:
+            data['protocol'] = protocol
+        if protocolNum is not None:
+            data['protocolNum'] = protocolNum
+        if destPort is not None:
+            data['destPort'] = destPort
+        return self.getClient().post(data)
+
+
+class Inspection(Api):
+    def create(self, data):
+        self.getClient().setUrl(self.url() + 'device-inspections')
+        return self.getClient().post(data)
+
+    def delete(self, inspectionId):
+        self.getClient().setUrl(self.url() + 'device-inspections' + inspectionId)
+        self.getClient().delete()
+
+    def query(self, name=None):
+        self.getClient().setUrl(self.url() + 'device-inspections?pageNum=1&pageSize=100')
+        inspections = self.getClient().get().get('items')
+        result = []
+        if inspections is None:
+            return result
+        for inspection in inspections:
+            if name is not None and name != inspection.get('name'):
+                continue
+            result.append(inspection)
         return result
 
 
